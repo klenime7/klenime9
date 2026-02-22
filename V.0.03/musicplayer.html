@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Music Player</title>
+   <link rel="icon" href="faviconn.ico" type="image/x-icon">
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Gravitas+One&display=swap" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css2?family=Gravitas+One&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+      <style>
+   @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+   /* ── Toolbar Variables ── */
+   :root {
+      --txt: #1d1d1f;
+      --sub-txt: #86868b;
+      --divider: rgba(0, 0, 0, 0.08);
+      --glass-blur: blur(50px) saturate(200%);
+   }
+
+   [data-theme="dark"] {
+      --txt: #f5f5f7;
+      --sub-txt: #98989d;
+      --divider: rgba(255, 255, 255, 0.1);
+   }
+
+   /* ── App Toolbar ── */
+   .app-toolbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid var(--divider);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+   }
+
+   [data-theme="dark"] .app-toolbar {
+      background: rgba(44, 44, 46, 0.7);
+   }
+
+   .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+   }
+
+   .toolbar-title h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--txt);
+      font-family: "Gravitas One", sans-serif;
+      letter-spacing: -0.01em;
+   }
+
+   .toolbar-center {
+      flex: 1;
+   }
+
+   .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      justify-content: flex-end;
+   }
+
+   /* ── Theme Toggle ── */
+   .theme-toggle {
+      position: fixed;
+      top: 12px;
+      right: 56px;
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--txt);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      z-index: 101;
+      transition: background 0.15s ease, transform 0.15s ease;
+   }
+
+   .theme-toggle:hover {
+      background: rgba(0, 0, 0, 0.04);
+   }
+
+   [data-theme="dark"] .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.06);
+   }
+
+   .theme-toggle:active {
+      transform: scale(0.92);
+   }
+
+   .theme-toggle svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      position: absolute;
+      opacity: 0;
+      transition: opacity 0.12s ease;
+   }
+
+   [data-theme="light"] .theme-toggle .sun-icon,
+   :root:not([data-theme]) .theme-toggle .sun-icon {
+      opacity: 1;
+   }
+
+   [data-theme="dark"] .theme-toggle .moon-icon {
+      opacity: 1;
+   }
+
+   /* ── GitHub Button ── */
+   .github-btn {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--txt);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      z-index: 101;
+      transition: background 0.15s ease, transform 0.15s ease;
+      text-decoration: none;
+   }
+
+   .github-btn:hover {
+      background: rgba(0, 0, 0, 0.04);
+   }
+
+   [data-theme="dark"] .github-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+   }
+
+   .github-btn:active {
+      transform: scale(0.92);
+   }
+
+   html{
+      box-sizing: border-box;
+   }
+   body{
+      margin:0;
+      padding-top: 60px;
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    
+   }
+
+   .background{
+      position:fixed;
+      width:200%;
+      height:200%;
+      top: -50%;
+      left:-50%;
+      z-index:-1;
+   }
+
+   .background img{
+      position:absolute;
+      margin:auto;
+      top:0;
+      left:0;
+      bottom:0;
+      right:0;
+      min-width:50%;
+      min-height:50%;
+      filter:blur(15px);
+      -webkit-fliter:blur(50px);
+      transform:scale(1.1);
+      transition: filter 0.3s ease;
+   }
+
+   [data-theme="dark"] .background img {
+      filter: blur(15px) brightness(0.35);
+   }
+
+   .music_player{
+          width: 280px;
+          box-sizing: border-box;
+          padding: 28px;
+          border-radius: 24px;
+          background: rgba(255, 255, 255, 0.65);
+          backdrop-filter: blur(40px) saturate(180%);
+          -webkit-backdrop-filter: blur(40px) saturate(180%);
+          box-shadow: 0 20px 60px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.7);
+          border: 1px solid rgba(255,255,255,0.6);
+          transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+   }
+
+   [data-theme="dark"] .music_player{
+          background: rgba(28, 28, 30, 0.72);
+          border-color: rgba(255,255,255,0.1);
+          box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+   }
+
+   .album_art{
+          width:200px;
+          height:200px;
+          border-radius: 16px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+          margin: 0 auto 20px;
+          overflow: hidden;
+   }
+   .album_art img{
+         width:100%;
+         height:100%;
+         object-fit: cover;
+         border-radius: 16px;
+         display:block;
+   }
+
+   h2{
+          font-size: 18px;
+          font-weight: 700;
+          margin: 6px 0 2px;
+          text-align: center;
+          color: var(--txt);
+          transition: color 0.3s ease;
+          font-family: 'Gravitas One', serif;
+          letter-spacing: -0.01em;
+   }
+   h3{
+          font-size: 13px;
+          font-weight: 400;
+          margin: 0 0 16px;
+          text-align: center;
+          color: var(--sub-txt);
+          transition: color 0.3s ease;
+          font-family: 'Dancing Script', cursive;
+   }
+
+   /* ── Timeline ── */
+   .player-progress{
+          width: 100%;
+          height: 6px;
+          border-radius: 999px;
+          background: rgba(0,0,0,0.12);
+          position: relative;
+          overflow: visible;
+          cursor: pointer;
+          transition: height 0.2s ease, background 0.3s ease;
+          margin-bottom: 2px;
+   }
+
+   .player-progress:hover {
+          height: 10px;
+   }
+
+   [data-theme="dark"] .player-progress{
+          background: rgba(255,255,255,0.15);
+   }
+
+   .progress{
+          background: var(--txt);
+          width: 0%;
+          height: 100%;
+          border-radius: 999px;
+          position: absolute;
+          top: 0;
+          left: 0;
+          transition: background 0.3s ease;
+          pointer-events: none;
+   }
+
+   /* Thumb knob */
+   .progress::after{
+          content: '';
+          position: absolute;
+          right: -6px;
+          top: 50%;
+          transform: translateY(-50%) scale(0);
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          background: var(--txt);
+          box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+          transition: transform 0.15s ease, background 0.3s ease;
+   }
+
+   .player-progress:hover .progress::after{
+          transform: translateY(-50%) scale(1);
+   }
+
+   .music-duration{
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 500;
+      margin-top: 6px;
+      color: var(--sub-txt);
+      transition: color 0.3s ease;
+      font-family: 'Roboto', sans-serif;
+   }
+
+   .control{
+          text-align: center;
+          margin: 24px 0 8px;
+          justify-content: center;
+          align-items: center;
+          display: flex;
+          gap: 20px;
+   }
+
+   .play_btn{
+          width: 52px;
+          height: 52px;
+          background-color: rgba(255,255,255,0.9);
+          border: 1px solid rgba(0,0,0,0.08);
+          border-radius: 50%;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #000;
+          transition: background-color 0.3s ease, border-color 0.3s ease,
+                      color 0.3s ease, box-shadow 0.2s ease, transform 0.15s ease;
+   }
+
+   .play_btn:hover {
+          transform: scale(1.07);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+   }
+
+   .play_btn:active {
+          transform: scale(0.94);
+   }
+
+   .prev_btn{
+          width: 44px;
+          height: 44px;
+          background-color: rgba(255,255,255,0.9);
+          border: 1px solid rgba(0,0,0,0.08);
+          border-radius: 50%;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #000;
+          transition: background-color 0.3s ease, border-color 0.3s ease,
+                      color 0.3s ease, box-shadow 0.2s ease, transform 0.15s ease;
+   }
+
+   .prev_btn:hover {
+          transform: scale(1.07);
+   }
+
+   .prev_btn:active {
+          transform: scale(0.94);
+   }
+
+   .next_btn{
+          width: 44px;
+          height: 44px;
+          background-color: rgba(255,255,255,0.9);
+          border: 1px solid rgba(0,0,0,0.08);
+          border-radius: 50%;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #000;
+          transition: background-color 0.3s ease, border-color 0.3s ease,
+                      color 0.3s ease, box-shadow 0.2s ease, transform 0.15s ease;
+   }
+
+   .next_btn:hover {
+          transform: scale(1.07);
+   }
+
+   .next_btn:active {
+          transform: scale(0.94);
+   }
+
+   [data-theme="dark"] .play_btn,
+   [data-theme="dark"] .prev_btn,
+   [data-theme="dark"] .next_btn {
+          color: #fff;
+          background-color: rgba(255,255,255,0.1);
+          border-color: rgba(255,255,255,0.12);
+          box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+   }
+
+   [data-theme="dark"] .play_btn:hover,
+   [data-theme="dark"] .prev_btn:hover,
+   [data-theme="dark"] .next_btn:hover {
+          background-color: rgba(255,255,255,0.18);
+   }
+
+   .player-controls{
+      position: relative;
+      top: -15px;
+      left: 120px;
+      width: 200px;
+   }
+      </style>
+   
+</head>
+<body>
+   <!-- Apple-style Toolbar -->
+   <div class="app-toolbar">
+      <div class="toolbar-left">
+         <div class="toolbar-title">
+            <h1>Music Player</h1>
+         </div>
+      </div>
+      <div class="toolbar-center"></div>
+      <div class="toolbar-right"></div>
+   </div>
+
+   <a id="githubBtn" class="github-btn" href="https://github.com" target="_blank" title="Visit GitHub" aria-label="GitHub">
+      <svg style="width:20px;height:20px;" viewBox="0 0 24 24" fill="currentColor">
+         <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+      </svg>
+   </a>
+
+   <!-- Theme Toggle -->
+   <button id="themeToggleBtn" class="theme-toggle" title="Toggle Dark Mode" aria-label="Toggle dark mode">
+      <svg class="sun-icon" viewBox="0 0 24 24">
+         <circle cx="12" cy="12" r="4"></circle>
+         <line x1="12" y1="2" x2="12" y2="5"></line>
+         <line x1="12" y1="19" x2="12" y2="22"></line>
+         <line x1="4.93" y1="4.93" x2="7.05" y2="7.05"></line>
+         <line x1="16.95" y1="16.95" x2="19.07" y2="19.07"></line>
+         <line x1="2" y1="12" x2="5" y2="12"></line>
+         <line x1="19" y1="12" x2="22" y2="12"></line>
+         <line x1="4.93" y1="19.07" x2="7.05" y2="16.95"></line>
+         <line x1="16.95" y1="7.05" x2="19.07" y2="4.93"></line>
+      </svg>
+      <svg class="moon-icon" viewBox="0 0 24 24">
+         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+   </button>
+
+   <div class="background">
+      <img src="tukicover.png" id="bg-img">
+   </div>
+   <div class="music_player">
+      <div class="album_art">
+         <img src="tukicover.png" id="cover">
+      </div>
+
+      <h2 id="music-title"></h2>
+      <h3 id="music-artist"></h3>
+
+   <div class="player-progress" id="player-progress">
+            <div class="progress" id="progress"></div>
+   </div>
+      <div class="music-duration">
+                <span id="current-time">0:00</span>
+                <span id="duration">0:00</span>
+            </div>
+   
+      <div class="control">
+         <div class="prev_btn" title="Previous" id="prev">
+            <svg viewBox="0 0 640 640" width="22" height="22" fill="currentColor">
+               <path d="M491 100.8C478.1 93.8 462.3 94.5 450 102.6L192 272.1L192 128C192 110.3 177.7 96 160 96C142.3 96 128 110.3 128 128L128 512C128 529.7 142.3 544 160 544C177.7 544 192 529.7 192 512L192 367.9L450 537.5C462.3 545.6 478 546.3 491 539.3C504 532.3 512 518.8 512 504.1L512 136.1C512 121.4 503.9 107.9 491 100.9z"/>
+            </svg>
+         </div>
+         <div class="play_btn" title="Play" id="play">
+            <svg class="icon-play" viewBox="0 0 640 640" width="24" height="24" fill="currentColor">
+               <path d="M187.2 100.9C174.8 94.1 159.8 94.4 147.6 101.6C135.4 108.8 128 121.9 128 136L128 504C128 518.1 135.5 531.2 147.6 538.4C159.7 545.6 174.8 545.9 187.2 539.1L523.2 355.1C536 348.1 544 334.6 544 320C544 305.4 536 291.9 523.2 284.9L187.2 100.9z"/>
+            </svg>
+            <svg class="icon-pause" viewBox="0 0 640 640" width="24" height="24" fill="currentColor" style="display:none">
+               <path d="M176 96C149.5 96 128 117.5 128 144L128 496C128 522.5 149.5 544 176 544L240 544C266.5 544 288 522.5 288 496L288 144C288 117.5 266.5 96 240 96L176 96zM400 96C373.5 96 352 117.5 352 144L352 496C352 522.5 373.5 544 400 544L464 544C490.5 544 512 522.5 512 496L512 144C512 117.5 490.5 96 464 96L400 96z"/>
+            </svg>
+         </div>
+         <div class="next_btn" title="Next" id="next">
+            <svg viewBox="0 0 640 640" width="22" height="22" fill="currentColor">
+               <path d="M149 100.8C161.9 93.8 177.7 94.5 190 102.6L448 272.1L448 128C448 110.3 462.3 96 480 96C497.7 96 512 110.3 512 128L512 512C512 529.7 497.7 544 480 544C462.3 544 448 529.7 448 512L448 367.9L190 537.5C177.7 545.6 162 546.3 149 539.3C136 532.3 128 518.7 128 504L128 136C128 121.3 136.1 107.8 149 100.8z"/>
+            </svg>
+         </div>
+      </div>
+   </div>
+      <script>
+   // ── Theme Toggle ──
+   function setTheme(isDark) {
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      localStorage.setItem('musicplayer-theme', isDark ? 'dark' : 'light');
+   }
+   function initTheme() {
+      const saved = localStorage.getItem('musicplayer-theme');
+      const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(saved ? saved === 'dark' : preferDark);
+   }
+   initTheme();
+   document.getElementById('themeToggleBtn').onclick = () => {
+      setTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
+   };
+
+   const album = document.getElementById('cover'),
+      title = document.getElementById('music-title'),
+      artist = document.getElementById('music-artist'),
+      currentTimeEl = document.getElementById('current-time'),
+      durationEl = document.getElementById('duration'),
+      progress = document.getElementById('progress'),
+      playerProgress = document.getElementById('player-progress'),
+      prev_btn = document.getElementById('prev'),
+      next_btn = document.getElementById('next'),
+      play_btn = document.getElementById('play'),
+      background = document.getElementById('bg-img');
+
+   const music = new Audio();
+
+   const songs = [
+
+      {
+         path: 'daisy-k-pop-type-beat.mp3',
+         displayName: 'daisy',
+         cover: 'daisy.webp',
+         artist: 'bonnytown',
+      },
+      {
+         path: 'say-yes-k-pop-type-beat.mp3',
+         displayName: 'say yes',
+         cover: 'sayyes.webp',
+         artist: 'bonnytown',
+      }
+   ];
+
+   let musicIndex = 0;
+   let isPlaying = false;
+
+   function togglePlay() {
+      if (isPlaying) {
+         pauseMusic();
+      } else {
+         playMusic();
+      }
+   }
+
+   function playMusic() {
+      isPlaying = true;
+      play_btn.querySelector('.icon-play').style.display = 'none';
+      play_btn.querySelector('.icon-pause').style.display = 'block';
+      play_btn.setAttribute('title', 'Pause');
+      music.play();
+   }
+
+   function pauseMusic(){
+      isPlaying = false;
+      play_btn.querySelector('.icon-play').style.display = 'block';
+      play_btn.querySelector('.icon-pause').style.display = 'none';
+      play_btn.setAttribute('title', 'Play');
+      music.pause();
+   }
+
+   function loadMusic(song) {
+      music.src = song.path;
+      title.textContent = song.displayName;
+      artist.textContent = song.artist;
+      album.src = song.cover;
+      background.src = song.cover;
+    
+      music.addEventListener('loadedmetadata', () => {
+         updateDuration();
+      });
+      durationEl.textContent = '0:00';
+   }
+
+   function changeMusic(direction) {
+      musicIndex = (musicIndex + direction + songs.length) % songs.length;
+      loadMusic(songs[musicIndex]);
+      playMusic();
+   }
+
+   function updateProgressBar() {
+      const { duration, currentTime } = music;
+      const progressPercent = (currentTime / duration) * 100;
+      progress.style.width = `${progressPercent}%`;
+      currentTimeEl.textContent = formatTime(currentTime);
+   }
+
+   function setProgressBar(e) {
+      const width = playerProgress.clientWidth;
+      const clickX = e.offsetX;
+      music.currentTime = (clickX / width) * music.duration;
+   }
+
+   function formatTime(time) {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+   }
+
+   function updateDuration() {
+      if (!isNaN(music.duration)) {
+         durationEl.textContent = formatTime(music.duration);
+      } else {
+         durationEl.textContent = '0:00'; // Or some other default
+      }
+   }
+
+   play_btn.addEventListener('click', togglePlay);
+   prev_btn.addEventListener('click', () => changeMusic(-1));
+   next_btn.addEventListener('click', () => changeMusic(1));
+   music.addEventListener('ended', () => changeMusic(1));
+   music.addEventListener('timeupdate', updateProgressBar);
+   playerProgress.addEventListener('click', setProgressBar);
+
+   loadMusic(songs[musicIndex]);
+      </script>
+</body>
+</html>
